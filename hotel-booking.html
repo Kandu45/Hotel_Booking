@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SerenoStays — Hotel Booking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & TOKENS ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --forest:   #0E5C45;
+  --forest-m: #197A5C;
+  --forest-l: #D6EDE6;
+  --sand:     #F5F1EA;
+  --ink:      #1A1A18;
+  --muted:    #6B6B65;
+  --border:   #E2DDD6;
+  --white:    #FFFFFF;
+  --amber:    #C47F1A;
+  --coral:    #D4513A;
+  --radius-s: 6px;
+  --radius-m: 12px;
+  --radius-l: 20px;
+  --shadow-s: 0 1px 4px rgba(0,0,0,.08);
+  --shadow-m: 0 4px 24px rgba(0,0,0,.10);
+  --shadow-l: 0 12px 48px rgba(0,0,0,.14);
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--sand);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── SCROLLBAR ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--sand); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* ── NAV ────────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 60px;
+  background: rgba(245,241,234,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  font-family: var(--font-display);
+  font-size: 22px; color: var(--forest);
+  letter-spacing: -0.5px;
+}
+.logo em { color: var(--ink); font-style: normal; }
+.nav-links { display: flex; gap: 24px; align-items: center; }
+.nav-links a {
+  font-size: 13px; color: var(--muted);
+  text-decoration: none; cursor: pointer;
+  transition: color .15s;
+}
+.nav-links a:hover { color: var(--ink); }
+.btn { 
+  display: inline-flex; align-items: center; gap: 6px;
+  border: none; cursor: pointer; font-family: var(--font-body);
+  font-weight: 500; transition: all .15s; text-decoration: none;
+}
+.btn-outline {
+  background: transparent; border: 1px solid var(--border);
+  padding: 7px 16px; border-radius: var(--radius-s);
+  font-size: 13px; color: var(--ink);
+}
+.btn-outline:hover { border-color: var(--ink); }
+.btn-primary {
+  background: var(--forest); color: var(--white);
+  padding: 9px 20px; border-radius: var(--radius-s);
+  font-size: 13px;
+}
+.btn-primary:hover { background: var(--forest-m); }
+.btn-lg {
+  padding: 13px 28px; font-size: 15px; border-radius: var(--radius-m);
+}
+
+/* ── HERO ───────────────────────────────────────────────────── */
+.hero {
+  background: var(--forest);
+  padding: 72px 40px 0;
+  overflow: hidden;
+  position: relative;
+}
+.hero-grid { 
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: end;
+}
+.hero-text { padding-bottom: 60px; }
+.hero-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 58px);
+  line-height: 1.1; letter-spacing: -1px;
+  color: var(--white); margin-bottom: 16px;
+}
+.hero h1 em { color: #7ECFB0; font-style: italic; }
+.hero-sub {
+  font-size: 16px; color: rgba(255,255,255,.65);
+  margin-bottom: 36px; max-width: 380px; line-height: 1.7;
+}
+.hero-stats {
+  display: flex; gap: 32px;
+  border-top: 1px solid rgba(255,255,255,.12);
+  padding-top: 28px; margin-top: 28px;
+}
+.stat-val {
+  font-family: var(--font-display);
+  font-size: 24px; color: var(--white);
+}
+.stat-lbl {
+  font-size: 11px; color: rgba(255,255,255,.45);
+  margin-top: 2px; letter-spacing: .5px;
+}
+
+/* HERO SEARCH CARD */
+.search-card {
+  background: var(--white);
+  border-radius: var(--radius-l) var(--radius-l) 0 0;
+  padding: 32px; box-shadow: var(--shadow-l);
+  position: relative; z-index: 2;
+}
+.search-card h2 {
+  font-family: var(--font-display);
+  font-size: 20px; margin-bottom: 24px; color: var(--ink);
+}
+.field-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 14px; margin-bottom: 14px;
+}
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field.full { grid-column: 1 / -1; }
+.field label {
+  font-size: 11px; font-weight: 600; letter-spacing: .8px;
+  text-transform: uppercase; color: var(--muted);
+}
+.field input, .field select {
+  width: 100%; padding: 10px 13px;
+  border: 1px solid var(--border); border-radius: var(--radius-s);
+  font-family: var(--font-body); font-size: 14px;
+  color: var(--ink); background: var(--white);
+  transition: border-color .15s;
+  appearance: none;
+}
+.field input:focus, .field select:focus {
+  outline: none; border-color: var(--forest);
+  box-shadow: 0 0 0 3px var(--forest-l);
+}
+.search-btn {
+  width: 100%; margin-top: 6px;
+  justify-content: center;
+}
+
+/* ── SECTION WRAPPER ────────────────────────────────────────── */
+.section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 60px 40px;
+}
+.section-hd {
+  display: flex; align-items: baseline;
+  justify-content: space-between; margin-bottom: 28px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 26px; letter-spacing: -0.3px;
+}
+.see-all {
+  font-size: 13px; color: var(--forest);
+  cursor: pointer; text-decoration: none;
+  border-bottom: 1px solid var(--forest-l);
+  transition: border-color .15s;
+}
+.see-all:hover { border-color: var(--forest); }
+
+/* ── CATEGORIES ─────────────────────────────────────────────── */
+.cats { display: flex; gap: 12px; flex-wrap: wrap; }
+.cat-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 99px;
+  border: 1px solid var(--border); background: var(--white);
+  cursor: pointer; font-size: 13px; font-weight: 500;
+  transition: all .15s; user-select: none;
+}
+.cat-pill span { font-size: 18px; }
+.cat-pill:hover { border-color: var(--forest); color: var(--forest); }
+.cat-pill.active {
+  background: var(--forest); color: var(--white);
+  border-color: var(--forest);
+}
+.cat-pill .count {
+  font-size: 11px; opacity: .65;
+  font-family: var(--font-mono);
+}
+
+/* ── HOTEL GRID ─────────────────────────────────────────────── */
+.hotels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+.hotel-card {
+  background: var(--white); border-radius: var(--radius-m);
+  border: 1px solid var(--border); overflow: hidden;
+  cursor: pointer; transition: transform .15s, box-shadow .15s;
+}
+.hotel-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-m);
+}
+.card-img {
+  height: 160px; display: flex; align-items: center;
+  justify-content: center; font-size: 52px;
+  position: relative;
+}
+.card-badge {
+  position: absolute; top: 10px; left: 10px;
+  padding: 3px 10px; border-radius: 99px;
+  font-size: 10px; font-weight: 600; letter-spacing: .5px;
+  text-transform: uppercase;
+}
+.badge-top { background: var(--forest); color: #fff; }
+.badge-sale { background: var(--coral); color: #fff; }
+.badge-luxury { background: var(--amber); color: #fff; }
+.card-body { padding: 16px; }
+.card-name {
+  font-family: var(--font-display);
+  font-size: 16px; margin-bottom: 4px;
+}
+.card-loc {
+  font-size: 12px; color: var(--muted);
+  margin-bottom: 14px;
+}
+.card-footer {
+  display: flex; align-items: center;
+  justify-content: space-between;
+}
+.card-price { font-size: 15px; font-weight: 600; color: var(--forest); }
+.card-price span { font-size: 11px; color: var(--muted); font-weight: 400; }
+.stars { color: #E8A020; font-size: 11px; letter-spacing: -1px; }
+.rating {
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--forest-l); color: var(--forest);
+  padding: 3px 7px; border-radius: 99px;
+}
+
+/* ── FILTERS ────────────────────────────────────────────────── */
+.filters {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.f-chip {
+  padding: 6px 14px; border-radius: 99px;
+  border: 1px solid var(--border); background: var(--white);
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: all .15s; user-select: none;
+}
+.f-chip:hover { border-color: var(--forest); color: var(--forest); }
+.f-chip.active {
+  background: var(--forest); color: #fff; border-color: var(--forest);
+}
+
+/* ── WHY SECTION ────────────────────────────────────────────── */
+.why-bg { background: var(--forest); }
+.why-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 32px;
+}
+.why-card {
+  border-top: 1px solid rgba(255,255,255,.15);
+  padding-top: 24px;
+}
+.why-icon { font-size: 28px; margin-bottom: 14px; }
+.why-title {
+  font-family: var(--font-display);
+  font-size: 18px; color: #fff; margin-bottom: 8px;
+}
+.why-desc { font-size: 13px; color: rgba(255,255,255,.55); line-height: 1.7; }
+.why-section-title {
+  font-family: var(--font-display);
+  font-size: 32px; color: #fff; margin-bottom: 40px;
+  letter-spacing: -0.5px;
+}
+.why-section-title em { color: #7ECFB0; font-style: italic; }
+
+/* ── MODAL OVERLAY ──────────────────────────────────────────── */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(26,26,24,.6);
+  backdrop-filter: blur(4px);
+  display: none; z-index: 100;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.overlay.open { display: flex; }
+
+.modal {
+  background: var(--white); border-radius: var(--radius-l);
+  width: 520px; max-width: 100%; max-height: 92vh;
+  overflow-y: auto; box-shadow: var(--shadow-l);
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 24px 28px 0;
+}
+.modal-title {
+  font-family: var(--font-display); font-size: 22px;
+}
+.close-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--white);
+  cursor: pointer; font-size: 16px; color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.close-btn:hover { background: var(--sand); }
+.modal-body { padding: 24px 28px 28px; }
+
+.hotel-preview {
+  display: flex; gap: 14px; align-items: center;
+  background: var(--sand); border-radius: var(--radius-m);
+  padding: 16px; margin-bottom: 24px;
+}
+.preview-emoji { font-size: 40px; }
+.preview-name { font-family: var(--font-display); font-size: 17px; }
+.preview-loc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.preview-price { font-size: 14px; color: var(--forest); font-weight: 600; margin-top: 6px; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .8px;
+  color: var(--muted); margin-bottom: 5px;
+}
+.form-group input, .form-group select {
+  width: 100%; padding: 10px 13px;
+  border: 1px solid var(--border); border-radius: var(--radius-s);
+  font-family: var(--font-body); font-size: 14px; color: var(--ink);
+  background: var(--white); transition: border-color .15s;
+  appearance: none;
+}
+.form-group input:focus, .form-group select:focus {
+  outline: none; border-color: var(--forest);
+  box-shadow: 0 0 0 3px var(--forest-l);
+}
+
+.price-box {
+  background: var(--forest-l); border-radius: var(--radius-m);
+  padding: 18px 20px; margin: 20px 0;
+}
+.price-row {
+  display: flex; justify-content: space-between;
+  font-size: 13px; color: var(--ink); margin-bottom: 8px;
+}
+.price-row.total {
+  border-top: 1px solid rgba(14,92,69,.2);
+  padding-top: 10px; margin-top: 4px; margin-bottom: 0;
+  font-weight: 600; font-size: 15px; color: var(--forest);
+}
+.price-label { color: var(--muted); }
+
+/* SUCCESS */
+.success-view {
+  display: none; text-align: center; padding: 36px 28px;
+}
+.success-view.show { display: block; }
+.success-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--forest-l); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 30px; margin: 0 auto 18px;
+}
+.success-title {
+  font-family: var(--font-display);
+  font-size: 24px; margin-bottom: 8px;
+}
+.success-sub { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.booking-id {
+  font-family: var(--font-mono); font-size: 13px;
+  background: var(--sand); border-radius: var(--radius-s);
+  padding: 8px 16px; display: inline-block;
+  color: var(--forest); margin-bottom: 24px;
+}
+
+/* ── TOAST ──────────────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 200;
+  background: var(--ink); color: #fff;
+  padding: 12px 20px; border-radius: var(--radius-m);
+  font-size: 13px; box-shadow: var(--shadow-l);
+  transform: translateY(80px); opacity: 0;
+  transition: all .3s;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── BOOKINGS PAGE ──────────────────────────────────────────── */
+.page { display: none; }
+.page.active { display: block; }
+.tab-bar {
+  display: flex; gap: 4px;
+  background: var(--white); padding: 5px;
+  border-radius: var(--radius-m); border: 1px solid var(--border);
+  width: fit-content; margin-bottom: 28px;
+}
+.tab {
+  padding: 8px 20px; border-radius: var(--radius-s);
+  border: none; background: transparent; cursor: pointer;
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  color: var(--muted); transition: all .15s;
+}
+.tab.active { background: var(--forest); color: #fff; }
+.bookings-list { display: flex; flex-direction: column; gap: 14px; }
+.booking-row {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius-m); padding: 18px 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.b-emoji { font-size: 32px; }
+.b-info { flex: 1; }
+.b-name { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+.b-meta { font-size: 12px; color: var(--muted); }
+.b-right { text-align: right; }
+.b-amount { font-weight: 600; font-size: 15px; color: var(--forest); }
+.b-status {
+  font-size: 11px; padding: 3px 10px;
+  border-radius: 99px; font-weight: 500;
+  display: inline-block; margin-top: 4px;
+}
+.status-confirmed { background: var(--forest-l); color: var(--forest); }
+.status-cancelled { background: #FDECEA; color: var(--coral); }
+.cancel-btn {
+  padding: 6px 14px; border: 1px solid var(--border);
+  border-radius: var(--radius-s); background: var(--white);
+  cursor: pointer; font-size: 12px; color: var(--muted);
+  transition: all .15s; font-family: var(--font-body);
+}
+.cancel-btn:hover { border-color: var(--coral); color: var(--coral); }
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  color: var(--muted);
+}
+.empty-icon { font-size: 48px; margin-bottom: 14px; }
+.empty-title { font-family: var(--font-display); font-size: 20px; color: var(--ink); margin-bottom: 6px; }
+
+/* ── FOOTER ─────────────────────────────────────────────────── */
+footer {
+  background: var(--ink); color: rgba(255,255,255,.55);
+  padding: 48px 40px 24px;
+}
+.footer-grid {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px; margin-bottom: 40px;
+}
+.footer-brand .logo { color: #7ECFB0; font-size: 20px; }
+.footer-brand p { font-size: 13px; margin-top: 10px; line-height: 1.7; max-width: 220px; }
+.footer-col h4 {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+  color: rgba(255,255,255,.35); margin-bottom: 14px;
+}
+.footer-col a {
+  display: block; font-size: 13px; color: rgba(255,255,255,.5);
+  margin-bottom: 10px; cursor: pointer; text-decoration: none;
+  transition: color .15s;
+}
+.footer-col a:hover { color: rgba(255,255,255,.85); }
+.footer-bottom {
+  max-width: 1100px; margin: 0 auto;
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding-top: 20px; display: flex;
+  justify-content: space-between; align-items: center;
+  font-size: 12px;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .hero { padding: 40px 20px 0; }
+  .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+  .hero h1 { font-size: 36px; }
+  .search-card { border-radius: var(--radius-m); }
+  .field-grid { grid-template-columns: 1fr; }
+  .section { padding: 40px 20px; }
+  .why-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Sereno<em>Stays</em></div>
+  <div class="nav-links">
+    <a onclick="showPage('home')">Explore</a>
+    <a onclick="showPage('bookings')">My Bookings</a>
+    <a>Deals</a>
+    <button class="btn btn-outline">Sign in</button>
+  </div>
+</nav>
+
+<!-- ══ HOME PAGE ══════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <div class="hero-eyebrow">500,000+ properties in 185 countries</div>
+        <h1>Find your<br><em>perfect stay</em></h1>
+        <p class="hero-sub">Hotels, resorts and boutique retreats — hand-picked for every kind of journey.</p>
+        <div class="hero-stats">
+          <div><div class="stat-val">2.4M+</div><div class="stat-lbl">Happy guests</div></div>
+          <div><div class="stat-val">4.9★</div><div class="stat-lbl">Avg. rating</div></div>
+          <div><div class="stat-val">24 / 7</div><div class="stat-lbl">Support</div></div>
+        </div>
+      </div>
+      <div class="search-card">
+        <h2>Where are you going?</h2>
+        <div class="field full" style="margin-bottom:14px">
+          <label>Destination</label>
+          <input type="text" id="dest" placeholder="City, region, or hotel name" value="">
+        </div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Check-in</label>
+            <input type="date" id="checkin">
+          </div>
+          <div class="field">
+            <label>Check-out</label>
+            <input type="date" id="checkout">
+          </div>
+          <div class="field">
+            <label>Guests</label>
+            <select id="guests">
+              <option>1 guest</option>
+              <option selected>2 guests</option>
+              <option>3 guests</option>
+              <option>4 guests</option>
+              <option>5+ guests</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Rooms</label>
+            <select id="rooms">
+              <option selected>1 room</option>
+              <option>2 rooms</option>
+              <option>3 rooms</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg search-btn" onclick="handleSearch()">
+          🔍 Search hotels
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="section-title">Browse by type</div>
+    </div>
+    <div class="cats" id="cats"></div>
+  </div>
+
+  <!-- FEATURED HOTELS -->
+  <div style="background:var(--white); border-top:1px solid var(--border); border-bottom:1px solid var(--border)">
+    <div class="section" style="padding-top:48px;padding-bottom:48px">
+      <div class="section-hd">
+        <div class="section-title">Featured stays</div>
+        <a class="see-all">View all properties →</a>
+      </div>
+      <div class="filters" id="filters"></div>
+      <div class="hotels-grid" id="hotels-grid"></div>
+    </div>
+  </div>
+
+  <!-- WHY SECTION -->
+  <div class="why-bg">
+    <div class="section">
+      <div class="why-section-title">Why <em>SerenoStays?</em></div>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon">🛡️</div>
+          <div class="why-title">Verified & secure</div>
+          <div class="why-desc">Every property is vetted. Your payment is protected end-to-end with bank-grade encryption.</div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">↩️</div>
+          <div class="why-title">Free cancellation</div>
+          <div class="why-desc">Plans change. Most properties offer free cancellation up to 48 hours before check-in.</div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">💬</div>
+          <div class="why-title">24 / 7 support</div>
+          <div class="why-desc">Real humans, always available. Reach us by chat, call, or email anytime, anywhere.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">Sereno<span style="color:rgba(255,255,255,.6)">Stays</span></div>
+        <p>Curated stays for every kind of traveller — from city escapes to remote retreats.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a>About us</a><a>Careers</a><a>Press</a><a>Blog</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a>Help centre</a><a>Safety info</a><a>Cancellation</a><a>Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a>Privacy policy</a><a>Terms of use</a><a>Cookie policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 SerenoStays. All rights reserved.</span>
+      <span>🌿 Carbon-neutral booking</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ══ BOOKINGS PAGE ══════════════════════════════════════════ -->
+<div class="page" id="page-bookings">
+  <div class="section">
+    <div class="section-hd">
+      <div class="section-title">My Bookings</div>
+      <button class="btn btn-primary" onclick="showPage('home')">← Back to search</button>
+    </div>
+    <div class="tab-bar">
+      <button class="tab active" onclick="filterBookings('all',this)">All</button>
+      <button class="tab" onclick="filterBookings('Confirmed',this)">Confirmed</button>
+      <button class="tab" onclick="filterBookings('Cancelled',this)">Cancelled</button>
+    </div>
+    <div class="bookings-list" id="bookings-list"></div>
+  </div>
+</div>
+
+<!-- ══ BOOKING MODAL ══════════════════════════════════════════ -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+
+    <!-- FORM VIEW -->
+    <div id="form-view">
+      <div class="modal-header">
+        <div class="modal-title">Complete booking</div>
+        <button class="close-btn" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="hotel-preview" id="hotel-preview"></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>First name</label>
+            <input type="text" id="f-fname" placeholder="e.g. Ravi">
+          </div>
+          <div class="form-group">
+            <label>Last name</label>
+            <input type="text" id="f-lname" placeholder="e.g. Reddy">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email address</label>
+          <input type="email" id="f-email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Phone number</label>
+          <input type="tel" id="f-phone" placeholder="+91 98765 43210">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Check-in</label>
+            <input type="date" id="f-checkin">
+          </div>
+          <div class="form-group">
+            <label>Check-out</label>
+            <input type="date" id="f-checkout">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Guests</label>
+            <select id="f-guests">
+              <option>1</option><option selected>2</option>
+              <option>3</option><option>4</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Room type</label>
+            <select id="f-room" onchange="recalcPrice()"></select>
+          </div>
+        </div>
+
+        <div class="price-box" id="price-box"></div>
+
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:15px" onclick="confirmBooking()">
+          ✓ Confirm booking
+        </button>
+      </div>
+    </div>
+
+    <!-- SUCCESS VIEW -->
+    <div class="success-view" id="success-view">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Booking confirmed!</div>
+      <p class="success-sub">A confirmation has been sent to your email.</p>
+      <div class="booking-id" id="success-id"></div>
+      <p class="success-sub" style="margin-bottom:24px">Enjoy your stay — we hope to see you again.</p>
+      <button class="btn btn-primary btn-lg" onclick="closeModal()">Done</button>
+      &nbsp;
+      <button class="btn btn-outline btn-lg" onclick="showPage('bookings');closeModal()">View my bookings</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ───────────────────────────────────────────────────────
+const HOTELS = [
+  { id:1, name:"The Jade Cove",         loc:"Seminyak, Bali",          type:"Beach",    stars:5, rating:4.9, emoji:"🌴", badge:"top",     bg:"#E3F2F0",
+    rooms:{ "Standard Room":8400, "Deluxe Room":11200, "Ocean Suite":16800 } },
+  { id:2, name:"Horizon Sky Hotel",     loc:"Mumbai, India",            type:"City",     stars:4, rating:4.7, emoji:"🏙️", badge:"",        bg:"#EEF0F8",
+    rooms:{ "Standard Room":4200, "Deluxe Room":5800, "Penthouse Suite":9000 } },
+  { id:3, name:"Snowpeak Lodge",        loc:"Manali, Himachal Pradesh", type:"Mountain", stars:4, rating:4.8, emoji:"⛰️", badge:"",        bg:"#EDF2EA",
+    rooms:{ "Mountain Room":3600, "Deluxe Cabin":4900, "Summit Suite":7500 } },
+  { id:4, name:"Pearl Bay Resort",      loc:"Maldives",                 type:"Resort",   stars:5, rating:4.9, emoji:"🏝️", badge:"luxury",  bg:"#FDF4E7",
+    rooms:{ "Water Villa":22000, "Overwater Bungalow":32000, "Beach Suite":35000 } },
+  { id:5, name:"Kala Boutique Inn",     loc:"Jaipur, Rajasthan",        type:"Boutique", stars:3, rating:4.6, emoji:"🏡", badge:"sale",    bg:"#F8EEE8",
+    rooms:{ "Heritage Room":2800, "Royal Suite":4500 } },
+  { id:6, name:"Urban Nest",            loc:"Bengaluru, India",         type:"City",     stars:4, rating:4.5, emoji:"🏨", badge:"",        bg:"#F0EEF8",
+    rooms:{ "Standard Room":3200, "Deluxe Room":4400, "Executive Suite":6800 } },
+  { id:7, name:"Sunrise Cliff Villa",   loc:"Santorini, Greece",        type:"Beach",    stars:5, rating:5.0, emoji:"🌅", badge:"top",     bg:"#E8F4FB",
+    rooms:{ "Cliff Room":15000, "Infinity Suite":24000 } },
+  { id:8, name:"Forest Bloom Retreat",  loc:"Coorg, Karnataka",         type:"Mountain", stars:4, rating:4.7, emoji:"🌿", badge:"",        bg:"#EAF2EA",
+    rooms:{ "Forest Cottage":4800, "Premium Cottage":7200, "Treehouse Suite":10500 } },
+];
+
+const CATEGORIES = [
+  { label:"Beach",    emoji:"🏖️", count:"1,240" },
+  { label:"Mountain", emoji:"⛰️",  count:"836" },
+  { label:"City",     emoji:"🏙️", count:"3,510" },
+  { label:"Boutique", emoji:"🏡", count:"602" },
+  { label:"Resort",   emoji:"🌴", count:"980" },
+];
+
+const FILTERS = ["All","Beach","Mountain","City","Boutique","Resort","Under ₹5,000"];
+
+let bookings = [];
+let bookingCounter = 1000;
+let activeHotel = null;
+let activeFilter = "All";
+
+// ── INIT ───────────────────────────────────────────────────────
+(function init() {
+  // Default dates
+  const today = new Date();
+  const cin  = new Date(today); cin.setDate(today.getDate() + 7);
+  const cout = new Date(today); cout.setDate(today.getDate() + 12);
+  const fmt  = d => d.toISOString().split('T')[0];
+  ['checkin','checkout'].forEach((id,i) =>
+    document.getElementById(id).value = fmt(i===0 ? cin : cout));
+
+  renderCategories();
+  renderFilters();
+  renderHotels("All");
+})();
+
+// ── RENDER ─────────────────────────────────────────────────────
+function renderCategories() {
+  document.getElementById('cats').innerHTML = CATEGORIES.map(c => `
+    <div class="cat-pill" onclick="filterHotels('${c.label}')">
+      <span>${c.emoji}</span> ${c.label}
+      <span class="count">${c.count}</span>
+    </div>`).join('');
+}
+
+function renderFilters() {
+  document.getElementById('filters').innerHTML = FILTERS.map(f => `
+    <span class="f-chip${f==='All'?' active':''}" onclick="setFilter(this,'${f}')">${f}</span>
+  `).join('');
+}
+
+function renderHotels(filter) {
+  activeFilter = filter;
+  let list = filter === 'All' ? HOTELS
+    : filter === 'Under ₹5,000' ? HOTELS.filter(h => Math.min(...Object.values(h.rooms)) < 5000)
+    : HOTELS.filter(h => h.type === filter);
+
+  const grid = document.getElementById('hotels-grid');
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">No hotels found</div>
+      <p>Try a different filter.</p>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(h => {
+    const minPrice = Math.min(...Object.values(h.rooms));
+    const stars = '★'.repeat(h.stars) + '☆'.repeat(5-h.stars);
+    const badge = h.badge === 'top' ? `<span class="card-badge badge-top">Top rated</span>`
+                : h.badge === 'sale' ? `<span class="card-badge badge-sale">Sale</span>`
+                : h.badge === 'luxury' ? `<span class="card-badge badge-luxury">Luxury</span>` : '';
+    return `
+    <div class="hotel-card" onclick="openBookingModal(${h.id})">
+      <div class="card-img" style="background:${h.bg}">
+        ${h.emoji}${badge}
+      </div>
+      <div class="card-body">
+        <div class="card-name">${h.name}</div>
+        <div class="card-loc">📍 ${h.loc}</div>
+        <div class="card-footer">
+          <div>
+            <div class="card-price">₹${minPrice.toLocaleString()} <span>/night</span></div>
+            <div class="stars">${stars}</div>
+          </div>
+          <span class="rating">${h.rating}★</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderBookings(filter='all') {
+  const list = filter === 'all' ? bookings
+    : bookings.filter(b => b.status.toLowerCase() === filter.toLowerCase());
+  const el = document.getElementById('bookings-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🧳</div>
+      <div class="empty-title">No bookings yet</div>
+      <p>Search and book your first stay!</p>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="showPage('home')">Find a hotel</button>
+    </div>`;
+    return;
+  }
+  el.innerHTML = list.slice().reverse().map(b => `
+    <div class="booking-row">
+      <div class="b-emoji">${b.hotel.emoji}</div>
+      <div class="b-info">
+        <div class="b-name">${b.hotel.name}</div>
+        <div class="b-meta">${b.roomType} · ${b.guests} guest(s) · ${fmtDate(b.checkIn)} → ${fmtDate(b.checkOut)} (${b.nights} night${b.nights>1?'s':''})</div>
+        <div class="b-meta" style="margin-top:2px">📧 ${b.email}</div>
+      </div>
+      <div class="b-right">
+        <div class="b-amount">₹${b.total.toLocaleString()}</div>
+        <div class="b-status status-${b.status.toLowerCase()}">${b.status}</div>
+        ${b.status==='Confirmed'?`<button class="cancel-btn" style="margin-top:8px" onclick="cancelBooking(${b.id})">Cancel</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// ── MODAL ──────────────────────────────────────────────────────
+function openBookingModal(hotelId) {
+  activeHotel = HOTELS.find(h => h.id === hotelId);
+  if (!activeHotel) return;
+
+  // Preview
+  const minP = Math.min(...Object.values(activeHotel.rooms));
+  document.getElementById('hotel-preview').innerHTML = `
+    <div class="preview-emoji">${activeHotel.emoji}</div>
+    <div>
+      <div class="preview-name">${activeHotel.name}</div>
+      <div class="preview-loc">📍 ${activeHotel.loc} · ${'★'.repeat(activeHotel.stars)}</div>
+      <div class="preview-price">from ₹${minP.toLocaleString()}/night</div>
+    </div>`;
+
+  // Room select
+  const roomSel = document.getElementById('f-room');
+  roomSel.innerHTML = Object.entries(activeHotel.rooms)
+    .map(([r,p]) => `<option value="${p}" data-room="${r}">${r} — ₹${p.toLocaleString()}</option>`)
+    .join('');
+
+  // Dates
+  document.getElementById('f-checkin').value  = document.getElementById('checkin').value;
+  document.getElementById('f-checkout').value = document.getElementById('checkout').value;
+  ['f-checkin','f-checkout'].forEach(id =>
+    document.getElementById(id).addEventListener('change', recalcPrice));
+
+  // Reset views
+  document.getElementById('form-view').style.display = 'block';
+  document.getElementById('success-view').classList.remove('show');
+
+  recalcPrice();
+  document.getElementById('overlay').classList.add('open');
+}
+
+function recalcPrice() {
+  const ci  = new Date(document.getElementById('f-checkin').value);
+  const co  = new Date(document.getElementById('f-checkout').value);
+  const nights = Math.max(1, Math.round((co-ci)/86400000));
+  const sel  = document.getElementById('f-room');
+  const rate = parseInt(sel.value) || 0;
+  const roomName = sel.options[sel.selectedIndex]?.dataset.room || '';
+  const sub  = nights * rate;
+  const tax  = Math.round(sub * 0.12);
+  const total= sub + tax;
+
+  document.getElementById('price-box').innerHTML = `
+    <div class="price-row"><span class="price-label">${nights} night${nights>1?'s':''} × ₹${rate.toLocaleString()}</span><span>₹${sub.toLocaleString()}</span></div>
+    <div class="price-row"><span class="price-label">Tax & fees (12%)</span><span>₹${tax.toLocaleString()}</span></div>
+    <div class="price-row total"><span>Total</span><span>₹${total.toLocaleString()}</span></div>`;
+}
+
+function confirmBooking() {
+  const fname = document.getElementById('f-fname').value.trim();
+  const lname = document.getElementById('f-lname').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const ci    = document.getElementById('f-checkin').value;
+  const co    = document.getElementById('f-checkout').value;
+  const guests= document.getElementById('f-guests').value;
+  const sel   = document.getElementById('f-room');
+  const rate  = parseInt(sel.value);
+  const roomType = sel.options[sel.selectedIndex]?.dataset.room || '';
+
+  if (!fname || !lname) { showToast("⚠️ Please enter your full name."); return; }
+  if (!email.includes('@')) { showToast("⚠️ Enter a valid email address."); return; }
+  if (!ci || !co || new Date(co) <= new Date(ci)) { showToast("⚠️ Check-out must be after check-in."); return; }
+
+  const nights = Math.round((new Date(co)-new Date(ci))/86400000);
+  const sub    = nights * rate;
+  const tax    = Math.round(sub * 0.12);
+
+  const booking = {
+    id: ++bookingCounter,
+    guestName: fname + ' ' + lname,
+    email, phone,
+    hotel: activeHotel,
+    roomType, rate, nights, guests,
+    checkIn: ci, checkOut: co,
+    sub, tax,
+    total: sub + tax,
+    status: 'Confirmed',
+    bookedAt: new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})
+  };
+  bookings.push(booking);
+
+  const bid = `SRN-${booking.id}`;
+  document.getElementById('success-id').textContent = bid;
+  document.getElementById('form-view').style.display = 'none';
+  document.getElementById('success-view').classList.add('show');
+}
+
+function cancelBooking(id) {
+  const b = bookings.find(x => x.id === id);
+  if (b) { b.status = 'Cancelled'; renderBookings(); showToast("Booking cancelled."); }
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if (name === 'bookings') renderBookings();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setFilter(el, filter) {
+  document.querySelectorAll('.f-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderHotels(filter);
+}
+
+function filterHotels(type) {
+  document.querySelector('[style*="background:var(--white)"]')?.scrollIntoView({ behavior:'smooth' });
+  setTimeout(() => {
+    document.querySelectorAll('.f-chip').forEach(c => {
+      c.classList.toggle('active', c.textContent.trim() === type);
+    });
+    renderHotels(type);
+  }, 400);
+}
+
+function filterBookings(filter, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderBookings(filter);
+}
+
+function handleSearch() {
+  const dest = document.getElementById('dest').value.trim().toLowerCase();
+  let list = dest ? HOTELS.filter(h =>
+    h.loc.toLowerCase().includes(dest) || h.name.toLowerCase().includes(dest)) : HOTELS;
+  
+  const grid = document.getElementById('hotels-grid');
+  if (!list.length) {
+    showToast(`No hotels found for "${dest}"`);
+    renderHotels('All');
+    return;
+  }
+  document.querySelectorAll('.f-chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('.f-chip').classList.add('active');
+
+  const minPrice = f => Math.min(...Object.values(f.rooms));
+  const stars = (h,n) => '★'.repeat(n) + '☆'.repeat(5-n);
+  grid.innerHTML = list.map(h => {
+    const badge = h.badge === 'top' ? `<span class="card-badge badge-top">Top rated</span>`
+                : h.badge === 'sale' ? `<span class="card-badge badge-sale">Sale</span>`
+                : h.badge === 'luxury' ? `<span class="card-badge badge-luxury">Luxury</span>` : '';
+    return `
+    <div class="hotel-card" onclick="openBookingModal(${h.id})">
+      <div class="card-img" style="background:${h.bg}">${h.emoji}${badge}</div>
+      <div class="card-body">
+        <div class="card-name">${h.name}</div>
+        <div class="card-loc">📍 ${h.loc}</div>
+        <div class="card-footer">
+          <div>
+            <div class="card-price">₹${minPrice(h).toLocaleString()} <span>/night</span></div>
+            <div class="stars">${stars(h,h.stars)}</div>
+          </div>
+          <span class="rating">${h.rating}★</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  showToast(`✓ ${list.length} hotel${list.length>1?'s':''} found`);
+  document.querySelector('[style*="background:var(--white)"]')?.scrollIntoView({ behavior:'smooth' });
+}
+
+// ── UTILS ──────────────────────────────────────────────────────
+function fmtDate(d) {
+  return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
